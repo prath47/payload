@@ -1911,6 +1911,19 @@
       "criteriaAssessed": ["1.3.1 Info and Relationships (A)", "2.4.3 Focus Order (A)"],
       "next": "Finish the already prepared manual save check. Afterwards verify only the corrected table-cell case; do not repeat the now-passing widget case without a relevant change.",
       "browserVerification": "Exact row/checkbox lookup and keyboard focus verified in the existing Chromium grid regression: 1 passed in 7.2 seconds. Targeted lint passed. No local native execution."
+    },
+    "manualSaveFollowUp": {
+      "date": "2026-10-28",
+      "evidence": "User-relayed manual WebKit/VoiceOver check: changing Subtitle then Cmd+S produces field re-description followed by Draft saved successfully, while focus stays in Subtitle. Disposable record cleaned up remotely.",
+      "interpretation": "The reported barrier did not reproduce in this manual scenario. Automated first-phrase mismatch is consistent with a capture-window issue, not proof of a missing product announcement.",
+      "sdkFinding": "Installed Guidepup 0.36.4 lastSpokenPhrase reads its cached log; polling that getter alone cannot discover trailing native speech. capture refreshes native output.",
+      "change": "For this save test only, preserve the initial full capture and passively refresh capture if success speech is absent, with a 15-second assertion bound. Do not repeat save, move the cursor or synthesize a read command. Keep persisted-data, DOM-focus and native-cursor assertions. Overall test timeout unchanged.",
+      "verification": "Native automation remains pending; manual result is scoped to the observed WebKit/VoiceOver scenario. No broader conformance claim.",
+      "criteriaAssessed": [
+        "4.1.3 Status Messages (AA): spontaneous save confirmation",
+        "2.4.3 Focus Order (A): DOM and screen-reader cursor remain on Subtitle"
+      ],
+      "next": "Remote single run of corrected table-cell and save tests. Do not rerun the verified widget case."
     }
   },
   "stackMigration": {

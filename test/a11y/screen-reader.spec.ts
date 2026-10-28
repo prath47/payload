@@ -530,9 +530,30 @@ test.describe('WCAG 2.2 Level AA — Screen readers', () => {
               screenReader,
             })
 
-            expect(capture.spokenPhrase).toMatch(
-              /(?:updated|saved).*successfully|successfully.*(?:updated|saved)/i,
-            )
+            const saveAnnouncement =
+              /(?:updated|saved).*successfully|successfully.*(?:updated|saved)/i
+            let spoken = capture.spokenPhrase
+
+            await expect
+              .poll(
+                async () => {
+                  if (!saveAnnouncement.test(spoken)) {
+                    // Guidepup's phrase getters read cached logs; a passive capture refreshes native output.
+                    const trailing = await captureScreenReader({
+                      action: () => Promise.resolve(),
+                      screenReader,
+                    })
+
+                    spoken += `\n${trailing.spokenPhrase}`
+                  }
+                  return spoken
+                },
+                {
+                  message: 'Save confirmation should follow the field announcement',
+                  timeout: 15000,
+                },
+              )
+              .toMatch(saveAnnouncement)
             expect((await screenReader.itemText()).replace(/\s+/g, ' ').trim()).toBe(cursorBefore)
             await expect(subtitle).toBeFocused()
             await page.reload()
